@@ -1,20 +1,20 @@
 package com.lei.basicAlgorithm;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Deque;
-import java.util.List;
+import java.util.Date;
 
 public class BasicSorts {
-    private static int max;
-
     public static void bubbleSort(int[] a) {
         int len = a.length;
-        for (int i = 0; i < len; i++) {
-            for (int j = 0; j < len - i - 1; j++) {
+        int flag = len - 1;
+        int index = flag;// 两个临时变量记住最后一个交换位置
+        for (int i = 0; i < index; i++) {
+            index = flag;
+            flag = 0;
+            for (int j = 0; j < index; j++) {
                 if (a[j] > a[j + 1]) {
                     swap(a, j, j + 1);
+                    flag = j;
                 }
             }
         }
@@ -25,6 +25,48 @@ public class BasicSorts {
             for (int j = i; j > 0; j--) {
                 if (a[j] < a[j - 1]) {
                     swap(a, j, j - 1);
+                }
+            }
+        }
+    }
+
+    public static void insertSort1(int[] a) {
+        for (int i = 0; i < a.length; i++) {
+            int index = i;
+            for (int j = i + 1; j < a.length; j++) {
+                if (a[index] > a[j]) {
+                    index = j;
+                }
+            }
+            swap(a, index, i);
+        }
+    }
+
+    public static void shellSort1(int[] a) {
+        int n = a.length;
+        for (int gap = n / 2; gap > 0; gap /= 2) {
+            for (int i = 0; i < n; i++) {
+                int index = i;
+                for (int j = i + gap; j < n; j += gap) {
+                    if (a[index] > a[j]) {
+                        index = j;
+                    }
+                }
+                swap(a, index, i);
+            }
+        }
+    }
+
+    public static void shellSort(int[] a) {
+        int i, j, gap;
+        int n = a.length;
+
+        for (gap = n / 2; gap > 0; gap /= 2) {
+            for (i = gap; i < n; i++) {
+                for (j = i - gap; j >= 0; j -= gap) {// for (j = i - gap; j >= 0 && a[j] > a[j+gap]; j -= gap) {swap();}
+                    if (a[j] > a[j + gap]) {
+                        swap(a, j, j + gap);
+                    }
                 }
             }
         }
@@ -44,27 +86,38 @@ public class BasicSorts {
         }
     }
 
-    private static int partition(int[] a, int left, int right) {
-        if (a == null || left < 0 || right < 0 || left > right) {
-            return Integer.MIN_VALUE;
+    public static void mergeSort(int[] a) {
+        int len = a.length;
+        int[] temp = new int[len];
+        int left = 0, right = len - 1;
+        mergeSort(a, left, right, temp);
+    }
+
+    private static void mergeSort(int[] a, int left, int right, int[] temp) {
+        if (left < right) {
+            int mid = (left + right) / 2;
+            mergeSort(a, left, mid, temp);
+            mergeSort(a, mid + 1, right, temp);
+            mergeSortedArray(a, left, mid, mid + 1, right, temp);
         }
-        int i = left, j = right, pivot = a[left];
-        while (i < j) {
-            while (i < j && a[j] > pivot) {
-                j--;
-            }
-            if (i < j) {
-                a[i++] = a[j];
-            }
-            while (i < j && a[i] < pivot) {
-                i++;
-            }
-            if (i < j) {
-                a[j--] = a[i];
-            }
+    }
+
+    private static void mergeSortedArray(int[] a, int left1, int right1, int left2, int right2, int[] temp) {
+        int k = 0;
+        int i = left1, j = left2;
+        int m = right1, n = right2;
+        while (i <= m && j <= n) {
+            temp[k++] = a[i] < a[j] ? a[i++] : a[j++];
         }
-        a[i] = pivot;
-        return i;
+        while (i <= m) {
+            temp[k++] = a[i++];
+        }
+        while (j <= n) {
+            temp[k++] = a[j++];
+        }
+        for (i = 0; i < k; i++) {
+            a[left1 + i] = temp[i];
+        }
     }
 
     // 交换：冒泡，快排
@@ -74,36 +127,6 @@ public class BasicSorts {
     public static void quickSort(int[] a) {
         int left = 0, right = a.length - 1;
         quickSort(a, left, right);
-    }
-
-    public static void quickSortNonRecursive(int[] a, int left, int right) {
-        if (a == null || left < 0 || right < 0 || left > right) {
-            return;
-        }
-        int i = left, j = right;
-        Deque<Integer> stack = new ArrayDeque<>();
-        
-        stack.push(i);
-        stack.push(j);
-        
-        while(!stack.isEmpty()) {
-            j = stack.pop();
-            i = stack.pop();
-            
-            if(i < j) {
-                int k = partition(a, i, j);
-                if(k > i) {
-                    stack.push(i);
-                    stack.push(k-1);
-                }
-                if(k < j) {
-                    stack.push(k+1);
-                    stack.push(j);
-                }
-            }
-            
-        }
-        
     }
 
     private static void quickSort(int[] a, int left, int right) {
@@ -139,130 +162,93 @@ public class BasicSorts {
         System.out.println(Arrays.toString(a));
     }
 
-    private static int getMax() {
-        return max;
-    }
-
-    private static void setMax(int max) {
-        BasicSorts.max = max;
-    }
-
-    public static void countingSort(int[] a) {
-        int max = getMax();
-        countingSort(a, max);
-    }
-
-    public static void countingSort(int[] a, int k) {
-        int[] temp = new int[k + 1];
-        for (int i = 0; i < a.length; i++) {
-            temp[a[i]]++;
-        }
-        int x = 0;
-        for (int i = 0; i <= k; i++) {
-            while (temp[i]-- > 0) {
-                a[x++] = i;
-            }
-        }
-    }
-
-    public static void bucketSort(int[] a, int m) {
-        List<Integer>[] buckets = new ArrayList[m];
-        for (int i = 0; i < m; i++) {
-            buckets[i] = new ArrayList<Integer>();
-        }
-        for (int i = 0; i < a.length; i++) {
-            buckets[(a[i] % m)].add(a[i]);
-        }
-
-        for (int i = 0; i < m; i++) {
-            int[] temp = new int[buckets[i].size()];
-            temp = buckets[i].stream().mapToInt(Integer::intValue).toArray();
-            quickSort(temp);
-            int size = buckets[i].size();
-            buckets[i].clear();
-            for (int j = 0; j < size; j++) {
-                buckets[i].add(temp[j]);
-            }
-        }
-        for (int i = 0; i < a.length; i++) {
-            int index = 0, j;
-            for (j = 0; j < m; j++) {
-                if (buckets[j].size() > 0 && buckets[j].get(0) < buckets[index].get(0)) {
-                    index = j;
-                }
-            }
-            a[i] = buckets[index].get(0);
-            buckets[index].remove(0);
-        }
-
-    }
-
-    public static void bucketSort1(int[] a, int m) {
-        int[][] buckets = new int[m][a.length];// 每个桶应该用可变大小的数据结构，自定义，或者用List，目前将就着吧。。。所以用初始化一下作为判断
-
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < a.length; j++) {
-                buckets[i][j] = Integer.MIN_VALUE;
-            }
-        }
-
-        for (int i = 0; i < a.length; i++) {
-            int x = 0;
-            while (buckets[a[i] / m][x++] != Integer.MIN_VALUE) {
-            }
-            buckets[a[i] / m][x - 1] = a[i];
-        }
-
-        for (int i = 0; i < buckets.length; i++) {
-            quickSort(buckets[i]);
-        }
-
-        for (int j = 0; j < a.length; j++) {
-            int min = Integer.MIN_VALUE;
-            for (int i = 0; i < buckets.length; i++) {
-                if (buckets[i].length > j + 1 && min > buckets[i][j]) {
-                    min = buckets[i][j];
-                }
-            }
-            a[j] = min;
-        }
-
-    }
-
-    private static class Bucket {
-        private static class Node {
-            int data;
-            Node next;
-
-            Node(int data) {
-                this.data = data;
-            }
-        }
-
-        Node head;
-        Node cur;
-
-        Bucket() {
-            this.head = new Node(Integer.MIN_VALUE);
-        }
-
-        void add(int data) {
-            cur.next = new Node(data);
-            cur = cur.next;
-        }
-    }
+    static int arraylenght = 10000;
+    static int[] a = new int[] { 1, 2, 5, 2, 3, 0, 0, 22, 33, 11, 9, 7, 6 };
 
     public static void main(String[] args) {
-        int[] a = new int[] { 1, 2, 5, 2, 3, 33, 11, 9, 7, 6, 29, 22, 12 };
+        // print(a);
+
+        long start = 0l, end = 0l;
+
+        // int[] a;
         print(a);
-        quickSortNonRecursive(a, 0, a.length - 1);
-        // bucketSort(a, 3);
-        // bubbleSort(a);
-        // insertSort(a);
-        // selectSort(a);
-        // quickSort(a);
-        // setMax(33);
-        // countingSort(a);
+        // bs();
+        shellSort1(a);
+        // insertSort1(a);
         print(a);
+        // is();
+        //
+        // ss();
+        //
+        // bs();
+        //
+        // ms();
+        //
+        // qs();
+
+        // print(a);
+    }
+
+    private static void is() {
+        long start;
+        long end;
+        int[] a;
+        a = randomArray(arraylenght);
+        start = new Date().getTime();
+        insertSort(a);
+        end = new Date().getTime();
+        System.out.println("insertSort: " + (end - start) + "ms");
+    }
+
+    private static void ss() {
+        long start;
+        long end;
+        int[] a;
+        a = randomArray(arraylenght);
+        start = new Date().getTime();
+        selectSort(a);
+        end = new Date().getTime();
+        System.out.println("selectSort: " + (end - start) + "ms");
+    }
+
+    private static void qs() {
+        long start;
+        long end;
+        int[] a;
+        a = randomArray(arraylenght);
+        start = new Date().getTime();
+        quickSort(a);
+        end = new Date().getTime();
+        System.out.println("quickSort: " + (end - start) + "ms");
+    }
+
+    private static void ms() {
+        long start;
+        long end;
+        int[] a;
+        a = randomArray(arraylenght);
+        start = new Date().getTime();
+        mergeSort(a);
+        end = new Date().getTime();
+        System.out.println("mergeSort: " + (end - start) + "ms");
+    }
+
+    private static void bs() {
+        long start;
+        long end;
+        // int[] a = randomArray(arraylenght);
+
+        start = new Date().getTime();
+        bubbleSort(a);
+        end = new Date().getTime();
+        System.out.println("bubleSort: " + (end - start) + "ms");
+    }
+
+    private static int[] randomArray(int lenght) {
+        int[] a = new int[lenght];
+        for (int i = 0; i < lenght; i++) {
+            a[i] = (int) (Math.random() * 1000);
+        }
+        return a;
     }
 }
