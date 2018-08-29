@@ -8,7 +8,6 @@ import java.util.Locale;
 
 public class TestDate {
 	public static void main(String[] args) throws ParseException {
-	Calendar c = c.getInstance();
 		
 		
 		
