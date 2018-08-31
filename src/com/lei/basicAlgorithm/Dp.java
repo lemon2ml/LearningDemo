@@ -61,6 +61,5 @@ public class Dp {
 
         System.out.println(maxSubSeqSum(allNegtive));
         
-        sfsdf
     }
 }
