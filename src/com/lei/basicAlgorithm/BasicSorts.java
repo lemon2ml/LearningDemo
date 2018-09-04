@@ -1,7 +1,9 @@
 package com.lei.basicAlgorithm;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
 
 public class BasicSorts {
@@ -42,6 +44,29 @@ public class BasicSorts {
         }
     }
 
+    private static int partition(int[] a, int left, int right) {
+        if (a == null || left < 0 || right < 0 || left > right) {
+            return Integer.MIN_VALUE;
+        }
+        int i = left, j = right, pivot = a[left];
+        while (i < j) {
+            while (i < j && a[j] > pivot) {
+                j--;
+            }
+            if (i < j) {
+                a[i++] = a[j];
+            }
+            while (i < j && a[i] < pivot) {
+                i++;
+            }
+            if (i < j) {
+                a[j--] = a[i];
+            }
+        }
+        a[i] = pivot;
+        return i;
+    }
+
     // 交换：冒泡，快排
     // 选择：选择， 堆
     // 插入： 插入， 希尔
@@ -49,6 +74,36 @@ public class BasicSorts {
     public static void quickSort(int[] a) {
         int left = 0, right = a.length - 1;
         quickSort(a, left, right);
+    }
+
+    public static void quickSortNonRecursive(int[] a, int left, int right) {
+        if (a == null || left < 0 || right < 0 || left > right) {
+            return;
+        }
+        int i = left, j = right;
+        Deque<Integer> stack = new ArrayDeque<>();
+        
+        stack.push(i);
+        stack.push(j);
+        
+        while(!stack.isEmpty()) {
+            j = stack.pop();
+            i = stack.pop();
+            
+            if(i < j) {
+                int k = partition(a, i, j);
+                if(k > i) {
+                    stack.push(i);
+                    stack.push(k-1);
+                }
+                if(k < j) {
+                    stack.push(k+1);
+                    stack.push(j);
+                }
+            }
+            
+        }
+        
     }
 
     private static void quickSort(int[] a, int left, int right) {
@@ -198,9 +253,10 @@ public class BasicSorts {
     }
 
     public static void main(String[] args) {
-        int[] a = new int[] { 1, 2, 5, 2, 3, 33, 11, 9, 7, 6,29,22,12 };
+        int[] a = new int[] { 1, 2, 5, 2, 3, 33, 11, 9, 7, 6, 29, 22, 12 };
         print(a);
-        bucketSort(a, 3);
+        quickSortNonRecursive(a, 0, a.length - 1);
+        // bucketSort(a, 3);
         // bubbleSort(a);
         // insertSort(a);
         // selectSort(a);
