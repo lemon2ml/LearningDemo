@@ -2,8 +2,6 @@ package com.lei.algs10.str;
 
 import java.util.Arrays;
 
-import edu.princeton.cs.algs4.NonrecursiveDFS;
-
 public class Permutation {
     static void reverse(char[] a, int start, int end) {
         while (start < end) {
@@ -69,10 +67,43 @@ public class Permutation {
         }
     }
 
+    static void prt(char[] a) {
+        for (int i = 0; i < a.length; i++) {
+            System.out.print(a[i] + " ");
+        }
+    }
+
+    static void recursive(char[] a, int from, int to) {
+        if (from == to) {
+            prt(a);
+            System.out.println();
+        } else {
+            for (int i = 0; i < a.length; i++) {
+                if(!isSwap()) {
+                    continue;
+                }
+                swap(a, from, i);
+                recursive(a, from + 1, to);
+                swap(a, from, i);
+            }
+        }
+    }
+
+    private static boolean isSwap() {
+        // TODO Auto-generated method stub
+        return true;
+    }
+
     public static void main(String[] args) {
-        String str = "92326520";
+        System.out.println();
+        String str = "923";
         char[] cs = str.toCharArray();
-        nonRecursive(cs);
-        
+
+        // ===================test recursive()===================
+        recursive(cs, 0, cs.length - 1);
+
+        // ===================test non-recursive()===================
+//        nonRecursive(cs);
+
     }
 }
