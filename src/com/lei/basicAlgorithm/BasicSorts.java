@@ -184,7 +184,7 @@ public class BasicSorts {
         //
         // ms();
         //
-        // qs();
+         qs();
 
         // print(a);
     }
