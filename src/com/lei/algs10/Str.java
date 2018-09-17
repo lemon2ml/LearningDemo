@@ -92,32 +92,10 @@ public class Str {
         str[j] = t;
     }
 
-    static void prtArray(char[] str) {
-        for (int i = 0; i < str.length; i++) {
-            System.out.print(str[i] + " ");
-        }
-    }
-
-    static void permutation2(char[] str, int from, int to) {
-        if (from == to) {
-            prtArray(str);
-            System.out.println();
-            return ;
-        }
-        for (int i = from; i <= to; i++) {
-            if(!isSwap(str, from, i)) {
-                continue;
-            }
-            swap(str, i, from);
-            permutation2(str, from + 1, to);
-            swap(str, i, from);
-        }
-    }
-
     public static void main(String[] args) {
-        String string = "12324";
+        String string = "1224";
         char[] str = string.toCharArray();
-        permutation2(str, 0, str.length - 1);
+        permutation(str, 0, str.length - 1);
 
     }
 }
